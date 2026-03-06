@@ -13,7 +13,7 @@ export class ProjectsService {
   async findById(id: string) {
     const project = await this.projectsRepository.findById(id);
     if (!project) {
-      throw new NotFoundException(`Project ${id} not found`);
+      throw new NotFoundException(`Project not found`);
     }
     return project;
   }
