@@ -1,10 +1,27 @@
+import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
-import { WorkerController } from './worker.controller';
-import { WorkerService } from './worker.service';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { PrismaModule } from './database/prisma.module';
+import { BuildProcessor } from './processors/build.processor';
 
 @Module({
-  imports: [],
-  controllers: [WorkerController],
-  providers: [WorkerService],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        connection: {
+          host: configService.get<string>('REDIS_HOST', 'localhost'),
+          port: configService.get<number>('REDIS_PORT', 6379),
+        },
+      }),
+      inject: [ConfigService],
+    }),
+    BullModule.registerQueue({
+      name: 'builds',
+    }),
+    PrismaModule,
+  ],
+  providers: [BuildProcessor]
 })
-export class WorkerModule {}
+export class WorkerModule { }
