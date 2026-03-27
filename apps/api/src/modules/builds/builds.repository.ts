@@ -3,7 +3,7 @@ import { PrismaService } from '../../database/prisma.service';
 
 @Injectable()
 export class BuildsRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   create(projectId: string, commitSha: string) {
     return this.prisma.build.create({
@@ -18,6 +18,17 @@ export class BuildsRepository {
   findById(id: string) {
     return this.prisma.build.findUnique({
       where: { id },
+    });
+  }
+
+  findByIdForUser(id: string, userId: string) {
+    return this.prisma.build.findFirst({
+      where: {
+        id,
+        project: {
+          userId,
+        },
+      },
     });
   }
 

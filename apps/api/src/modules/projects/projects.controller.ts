@@ -1,28 +1,31 @@
 import { CreateProjectDto } from '@devflow/shared';
 import { ProjectsService } from './projects.service';
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { CurrentUser } from '../auth/current-user.decorator';
 
+@UseGuards(JwtAuthGuard)
 @Controller('projects')
 export class ProjectsController {
-  constructor(private readonly projectsService: ProjectsService) {}
+  constructor(private readonly projectsService: ProjectsService) { }
 
   @Get()
-  findAll() {
-    return this.projectsService.findAll();
+  findAll(@CurrentUser() user: { userId: string }) {
+    return this.projectsService.findAll(user.userId);
   }
 
   @Get(':id')
-  findById(@Param('id') id: string) {
-    return this.projectsService.findById(id);
+  findById(@Param('id') id: string, @CurrentUser() user: { userId: string }) {
+    return this.projectsService.findById(id, user.userId);
   }
 
   @Post()
-  create(@Body() dto: CreateProjectDto) {
-    return this.projectsService.create(dto);
+  create(@Body() dto: CreateProjectDto, @CurrentUser() user: { userId: string }) {
+    return this.projectsService.create(dto, user.userId);
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string) {
-    return this.projectsService.delete(id);
+  delete(@Param('id') id: string, @CurrentUser() user: { userId: string }) {
+    return this.projectsService.delete(id, user.userId);
   }
 }

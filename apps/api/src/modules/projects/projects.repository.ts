@@ -4,26 +4,28 @@ import { CreateProjectDto } from '@devflow/shared';
 
 @Injectable()
 export class ProjectsRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
-  findAll() {
+  findAll(userId: string) {
     return this.prisma.project.findMany({
+      where: { userId },
       include: { builds: true },
     });
   }
 
-  findById(id: string) {
-    return this.prisma.project.findUnique({
-      where: { id },
+  findByIdForUser(id: string, userId: string) {
+    return this.prisma.project.findFirst({
+      where: { id, userId },
       include: { builds: true },
     });
   }
 
-  create(dto: CreateProjectDto) {
+  create(dto: CreateProjectDto, userId: string) {
     return this.prisma.project.create({
       data: {
         name: dto.name,
         repoUrl: dto.repoUrl,
+        userId,
       },
     });
   }

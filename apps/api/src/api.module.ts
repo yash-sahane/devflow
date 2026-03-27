@@ -7,6 +7,9 @@ import { ProjectsModule } from './modules/projects/projects.module';
 import { BuildsModule } from './modules/builds/builds.module';
 import { QueueModule } from './modules/queue/queue.module';
 import { InternalModule } from './modules/internal/internal.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { LogsModule } from './modules/logs/logs.module';
+import { DeploymentsModule } from './modules/deployments/deployments.module';
 
 @Module({
   imports: [
@@ -18,8 +21,11 @@ import { InternalModule } from './modules/internal/internal.module';
     BuildsModule,
     QueueModule,
     InternalModule,
+    AuthModule,
+    LogsModule,
+    DeploymentsModule,
   ],
   controllers: [ApiController],
   providers: [ApiService],
 })
-export class ApiModule {}
+export class ApiModule { }

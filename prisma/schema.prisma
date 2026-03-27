@@ -16,7 +16,8 @@ datasource db {
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
-  role      String
+  password  String
+  role      String   @default("DEV")
   createdAt DateTime @default(now())
 
   projects Project[]
@@ -52,6 +53,7 @@ model Build {
 model Deployment {
   id        String   @id @default(uuid())
   url       String
+  isActive  Boolean  @default(false)
   createdAt DateTime @default(now())
 
   buildId String

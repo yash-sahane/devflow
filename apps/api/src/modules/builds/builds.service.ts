@@ -11,32 +11,44 @@ export class BuildsService {
     private readonly buildsRepository: BuildsRepository,
     private readonly projectsService: ProjectsService,
     @InjectQueue('builds') private readonly buildsQueue: Queue,
-  ) {}
+  ) { }
 
-  async triggerBuild(projectId: string, dto: CreateBuildDto) {
+  async triggerBuild(projectId: string, dto: CreateBuildDto, userId: string) {
     // Throws NotFoundException if project doesn't exist
-    await this.projectsService.findById(projectId);
+    await this.projectsService.findById(projectId, userId);
 
     const build = await this.buildsRepository.create(projectId, dto.commitSha);
 
-    await this.buildsQueue.add('run-build', {
-      buildId: build.id,
-      projectId,
-      commitSha: dto.commitSha,
-    });
+    await this.buildsQueue.add(
+      'run-build',
+      {
+        buildId: build.id,
+        projectId,
+        commitSha: dto.commitSha,
+      },
+      {
+        attempts: 3,
+        backoff: { type: 'exponential', delay: 5000 },
+      },
+    );
 
     return { buildId: build.id, status: build.status };
   }
 
-  async findById(id: string) {
-    const build = await this.buildsRepository.findById(id);
+  async findById(id: string, userId: string) {
+    const build = await this.buildsRepository.findByIdForUser(id, userId);
     if (!build) {
       throw new NotFoundException(`Build ${id} not found`);
     }
     return build;
   }
 
-  findLogs(buildId: string) {
+  async findLogs(buildId: string, userId: string) {
+    const build = await this.buildsRepository.findByIdForUser(buildId, userId);
+    if (!build) {
+      throw new NotFoundException(`Build ${buildId} not found`);
+    }
+
     return this.buildsRepository.findLogs(buildId);
   }
 }
