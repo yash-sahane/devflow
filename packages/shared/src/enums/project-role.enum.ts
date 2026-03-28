@@ -1,0 +1,5 @@
+export enum ProjectRole {
+  PROJECT_ADMIN = 'PROJECT_ADMIN',
+  DEVELOPER = 'DEVELOPER',
+  VIEWER = 'VIEWER',
+}
