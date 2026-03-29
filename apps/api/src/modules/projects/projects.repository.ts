@@ -8,26 +8,37 @@ export class ProjectsRepository {
 
   findAll(userId: string) {
     return this.prisma.project.findMany({
-      where: { userId },
+      where: { members: { some: { userId } } },
       include: { builds: true },
     });
   }
 
   findByIdForUser(id: string, userId: string) {
     return this.prisma.project.findFirst({
-      where: { id, userId },
+      where: { id, members: { some: { userId } } },
       include: { builds: true },
     });
   }
 
   create(dto: CreateProjectDto, userId: string) {
-    return this.prisma.project.create({
-      data: {
-        name: dto.name,
-        repoUrl: dto.repoUrl,
-        userId,
-      },
-    });
+    return this.prisma.$transaction(async (tx) => {
+      const project = await tx.project.create({
+        data: {
+          name: dto.name,
+          repoUrl: dto.repoUrl,
+        }
+      })
+
+      await tx.projectMember.create({
+        data: {
+          projectId: project.id,
+          userId,
+          role: 'PROJECT_ADMIN',
+        }
+      })
+
+      return project;
+    })
   }
 
   delete(id: string) {

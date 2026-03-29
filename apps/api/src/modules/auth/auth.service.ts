@@ -18,10 +18,10 @@ export class AuthService {
 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
     const user = await this.prisma.user.create({
-      data: { email: dto.email, password: hashedPassword, role: 'DEV' },
+      data: { email: dto.email, password: hashedPassword, globalRole: 'DEV' },
     });
 
-    return { id: user.id, email: user.email, role: user.role };
+    return { id: user.id, email: user.email, role: user.globalRole };
   }
 
   async login(dto: LoginDto) {
@@ -31,7 +31,7 @@ export class AuthService {
     const isMatch = await bcrypt.compare(dto.password, user.password);
     if (!isMatch) throw new UnauthorizedException('Invalid credentials');
 
-    return this.generateTokens(user.id, user.email, user.role);
+    return this.generateTokens(user.id, user.email, user.globalRole);
   }
 
   async refresh(refreshToken: string) {
@@ -40,7 +40,7 @@ export class AuthService {
 
       const user = await this.prisma.user.findUnique({ where: { id: payload.sub } });
       if (!user) throw new UnauthorizedException('User not found');
-      return this.generateTokens(user.id, user.email, user.role);
+      return this.generateTokens(user.id, user.email, user.globalRole);
     } catch { throw new UnauthorizedException('Invalid or expired refresh token'); }
   }
 

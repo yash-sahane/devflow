@@ -13,14 +13,20 @@ datasource db {
   provider = "postgresql"
 }
 
-model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  role      String   @default("DEV")
-  createdAt DateTime @default(now())
+enum ProjectMemberRole {
+  PROJECT_ADMIN
+  DEVELOPER
+  VIEWER
+}
 
-  projects Project[]
+model User {
+  id         String   @id @default(uuid())
+  email      String   @unique
+  password   String
+  globalRole String   @default("DEV")
+  createdAt  DateTime @default(now())
+
+  projectMemberships ProjectMember[]
 }
 
 model Project {
@@ -30,10 +36,25 @@ model Project {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user   User?   @relation(fields: [userId], references: [id])
-  userId String?
+  builds  Build[]
+  members ProjectMember[]
+}
 
-  builds Build[]
+model ProjectMember {
+  id        String            @id @default(uuid())
+  projectId String
+  userId    String
+  role      ProjectMemberRole
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId])
+  @@index([projectId])
+  @@index([userId])
+  @@index([role])
 }
 
 model Build {

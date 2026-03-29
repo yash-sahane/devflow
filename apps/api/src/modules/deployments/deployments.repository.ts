@@ -47,11 +47,11 @@ export class DeploymentsRepository {
         id,
         build: {
           project: {
-            userId,
-          },
-        },
+            members: { some: { userId } },
+          }
+        }
       },
-      include: { build: true },
+      include: { build: true }
     })
   }
 }

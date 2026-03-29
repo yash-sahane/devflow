@@ -26,7 +26,7 @@ export class BuildsRepository {
       where: {
         id,
         project: {
-          userId,
+          members: { some: { userId } },
         },
       },
     });
