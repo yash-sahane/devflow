@@ -1,10 +1,12 @@
-import { CreateProjectDto } from '@devflow/shared';
+import { CreateProjectDto, PROJECT_PERMISSIONS } from '@devflow/shared';
 import { ProjectsService } from './projects.service';
 import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
+import { RequirePermissions } from '../auth/permission.decorator';
+import { PermissionsGuard } from '../auth/permissions.guard';
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 @Controller('projects')
 export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) { }
@@ -15,6 +17,7 @@ export class ProjectsController {
   }
 
   @Get(':id')
+  @RequirePermissions(PROJECT_PERMISSIONS.PROJECT_READ)
   findById(@Param('id') id: string, @CurrentUser() user: { userId: string }) {
     return this.projectsService.findById(id, user.userId);
   }
@@ -25,6 +28,7 @@ export class ProjectsController {
   }
 
   @Delete(':id')
+  @RequirePermissions(PROJECT_PERMISSIONS.PROJECT_DELETE)
   delete(@Param('id') id: string, @CurrentUser() user: { userId: string }) {
     return this.projectsService.delete(id, user.userId);
   }
