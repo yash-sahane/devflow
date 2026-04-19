@@ -25,6 +25,6 @@ import { PermissionsGuard } from './permissions.guard';
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, AuthorizationService, ProjectContextService, PermissionsGuard],
-  exports: [AuthorizationService, PermissionsGuard],
+  exports: [AuthorizationService, ProjectContextService, PermissionsGuard],
 })
 export class AuthModule { }
