@@ -6,6 +6,13 @@ import { CreateProjectDto } from '@devflow/shared';
 export class ProjectsRepository {
   constructor(private readonly prisma: PrismaService) { }
 
+  findRefById(id: string) {
+    return this.prisma.project.findUnique({
+      where: { id },
+      select: { id: true }
+    })
+  }
+
   findAll(userId: string) {
     return this.prisma.project.findMany({
       where: { members: { some: { userId } } },

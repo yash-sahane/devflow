@@ -40,18 +40,4 @@ export class DeploymentsRepository {
       include: { build: true }
     })
   }
-
-  findByIdForUser(id: string, userId: string) {
-    return this.prisma.deployment.findFirst({
-      where: {
-        id,
-        build: {
-          project: {
-            members: { some: { userId } },
-          }
-        }
-      },
-      include: { build: true }
-    })
-  }
 }

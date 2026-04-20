@@ -16,20 +16,19 @@ export class BuildsController {
   triggerBuild(
     @Param('projectId') projectId: string,
     @Body() dto: CreateBuildDto,
-    @CurrentUser() user: { userId: string },
   ) {
-    return this.buildsService.triggerBuild(projectId, dto, user.userId);
+    return this.buildsService.triggerBuild(projectId, dto);
   }
 
   @Get('builds/:id')
   @RequirePermissions(PROJECT_PERMISSIONS.PROJECT_READ)
-  findById(@Param('id') id: string, @CurrentUser() user: { userId: string }) {
-    return this.buildsService.findById(id, user.userId);
+  findById(@Param('id') id: string) {
+    return this.buildsService.findById(id);
   }
 
   @Get('builds/:id/logs')
   @RequirePermissions(PROJECT_PERMISSIONS.LOGS_READ)
-  findLogs(@Param('id') buildId: string, @CurrentUser() user: { userId: string }) {
-    return this.buildsService.findLogs(buildId, user.userId);
+  findLogs(@Param('id') buildId: string) {
+    return this.buildsService.findLogs(buildId);
   }
 }

@@ -13,9 +13,8 @@ export class BuildsService {
     @InjectQueue('builds') private readonly buildsQueue: Queue,
   ) { }
 
-  async triggerBuild(projectId: string, dto: CreateBuildDto, userId: string) {
-    // Throws NotFoundException if project doesn't exist
-    await this.projectsService.findById(projectId, userId);
+  async triggerBuild(projectId: string, dto: CreateBuildDto) {
+    await this.projectsService.assertProjectExists(projectId);
 
     const build = await this.buildsRepository.create(projectId, dto.commitSha);
 
@@ -35,16 +34,16 @@ export class BuildsService {
     return { buildId: build.id, status: build.status };
   }
 
-  async findById(id: string, userId: string) {
-    const build = await this.buildsRepository.findByIdForUser(id, userId);
+  async findById(id: string) {
+    const build = await this.buildsRepository.findById(id);
     if (!build) {
       throw new NotFoundException(`Build ${id} not found`);
     }
     return build;
   }
 
-  async findLogs(buildId: string, userId: string) {
-    const build = await this.buildsRepository.findByIdForUser(buildId, userId);
+  async findLogs(buildId: string) {
+    const build = await this.buildsRepository.findById(buildId);
     if (!build) {
       throw new NotFoundException(`Build ${buildId} not found`);
     }

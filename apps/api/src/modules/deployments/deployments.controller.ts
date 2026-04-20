@@ -13,19 +13,19 @@ export class DeploymentsController {
 
   @Get('projects/:projectId/deployments')
   @RequirePermissions(PROJECT_PERMISSIONS.DEPLOYMENT_READ)
-  getByProject(@Param('projectId') projectId: string, @CurrentUser() user: { userId: string }) {
-    return this.deploymentsService.getDeployments(projectId, user.userId);
+  getByProject(@Param('projectId') projectId: string) {
+    return this.deploymentsService.getDeployments(projectId);
   }
 
   @Get('deployments/:id')
   @RequirePermissions(PROJECT_PERMISSIONS.DEPLOYMENT_READ)
-  getById(@Param('id') id: string, @CurrentUser() user: { userId: string }) {
-    return this.deploymentsService.getDeploymentById(id, user.userId);
+  getById(@Param('id') id: string) {
+    return this.deploymentsService.getDeploymentById(id);
   }
 
   @Post('deployments/:id/rollback')
   @RequirePermissions(PROJECT_PERMISSIONS.DEPLOYMENT_ROLLBACK)
-  rollback(@Param('id') id: string, @CurrentUser() user: { userId: string }) {
-    return this.deploymentsService.rollback(id, user.userId);
+  rollback(@Param('id') id: string) {
+    return this.deploymentsService.rollback(id);
   }
 }

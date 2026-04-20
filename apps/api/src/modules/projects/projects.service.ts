@@ -6,6 +6,13 @@ import { CreateProjectDto } from '@devflow/shared';
 export class ProjectsService {
   constructor(private readonly projectsRepository: ProjectsRepository) { }
 
+  async assertProjectExists(id: string): Promise<void> {
+    const project = await this.projectsRepository.findRefById(id);
+    if (!project) {
+      throw new NotFoundException(`Project not found`);
+    }
+  }
+
   findAll(userId: string) {
     return this.projectsRepository.findAll(userId);
   }

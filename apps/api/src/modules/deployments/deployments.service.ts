@@ -28,8 +28,8 @@ export class DeploymentsService {
     return this.deploymentsRepository.setActive(deployment.id, build.projectId);
   }
 
-  async rollback(deploymentId: string, userId: string) {
-    const deployment = await this.deploymentsRepository.findByIdForUser(deploymentId, userId);
+  async rollback(deploymentId: string) {
+    const deployment = await this.deploymentsRepository.findById(deploymentId);
     if (!deployment) {
       throw new NotFoundException(`Deployment not found`);
     }
@@ -37,16 +37,16 @@ export class DeploymentsService {
     return this.deploymentsRepository.setActive(deploymentId, deployment.build.projectId);
   }
 
-  async getDeploymentById(id: string, userId: string) {
-    const deployment = await this.deploymentsRepository.findByIdForUser(id, userId);
+  async getDeploymentById(id: string) {
+    const deployment = await this.deploymentsRepository.findById(id);
     if (!deployment) {
       throw new NotFoundException(`Deployment not found`);
     }
     return deployment;
   }
 
-  async getDeployments(projectId: string, userId: string) {
-    await this.projectsService.findById(projectId, userId);
+  async getDeployments(projectId: string) {
+    await this.projectsService.assertProjectExists(projectId);
     return this.deploymentsRepository.findAllByProject(projectId);
   }
 }
