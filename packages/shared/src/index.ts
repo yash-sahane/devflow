@@ -1,6 +1,7 @@
 // dto
 export * from './dto/create-build-dto';
 export * from './dto/create-project-dto';
+export * from './dto/update-project-dto';
 export * from './dto/register-dto';
 export * from './dto/login-dto';
 

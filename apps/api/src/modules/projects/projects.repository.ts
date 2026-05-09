@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../database/prisma.service';
-import { CreateProjectDto } from '@devflow/shared';
+import { CreateProjectDto, UpdateProjectDto } from '@devflow/shared';
 
 @Injectable()
 export class ProjectsRepository {
@@ -20,9 +20,9 @@ export class ProjectsRepository {
     });
   }
 
-  findByIdForUser(id: string, userId: string) {
-    return this.prisma.project.findFirst({
-      where: { id, members: { some: { userId } } },
+  findById(id: string) {
+    return this.prisma.project.findUnique({
+      where: { id },
       include: { builds: true },
     });
   }
@@ -46,6 +46,13 @@ export class ProjectsRepository {
 
       return project;
     })
+  }
+
+  update(id: string, dto: UpdateProjectDto) {
+    return this.prisma.project.update({
+      where: { id },
+      data: dto,
+    });
   }
 
   delete(id: string) {

@@ -21,17 +21,6 @@ export class BuildsRepository {
     });
   }
 
-  findByIdForUser(id: string, userId: string) {
-    return this.prisma.build.findFirst({
-      where: {
-        id,
-        project: {
-          members: { some: { userId } },
-        },
-      },
-    });
-  }
-
   updateStatus(id: string, status: string) {
     return this.prisma.build.update({
       where: { id },

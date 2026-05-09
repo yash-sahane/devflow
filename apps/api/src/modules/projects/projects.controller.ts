@@ -1,6 +1,6 @@
-import { CreateProjectDto, PROJECT_PERMISSIONS } from '@devflow/shared';
+import { CreateProjectDto, UpdateProjectDto, PROJECT_PERMISSIONS } from '@devflow/shared';
 import { ProjectsService } from './projects.service';
-import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
 import { RequirePermissions } from '../auth/permission.decorator';
@@ -18,8 +18,8 @@ export class ProjectsController {
 
   @Get(':id')
   @RequirePermissions(PROJECT_PERMISSIONS.PROJECT_READ)
-  findById(@Param('id') id: string, @CurrentUser() user: { userId: string }) {
-    return this.projectsService.findById(id, user.userId);
+  findById(@Param('id') id: string) {
+    return this.projectsService.findById(id);
   }
 
   @Post()
@@ -27,9 +27,15 @@ export class ProjectsController {
     return this.projectsService.create(dto, user.userId);
   }
 
+  @Patch(':id')
+  @RequirePermissions(PROJECT_PERMISSIONS.PROJECT_UPDATE)
+  update(@Param('id') id: string, @Body() dto: UpdateProjectDto) {
+    return this.projectsService.update(id, dto);
+  }
+
   @Delete(':id')
   @RequirePermissions(PROJECT_PERMISSIONS.PROJECT_DELETE)
-  delete(@Param('id') id: string, @CurrentUser() user: { userId: string }) {
-    return this.projectsService.delete(id, user.userId);
+  delete(@Param('id') id: string) {
+    return this.projectsService.delete(id);
   }
 }

@@ -1,7 +1,7 @@
 export enum BuildStatus {
-  QUEUED = 'queued',
-  RUNNING = 'running',
-  SUCCESS = 'success',
-  FAILED = 'failed',
-  CANCELLED = 'cancelled',
+  QUEUED = 'QUEUED',
+  RUNNING = 'RUNNING',
+  SUCCESS = 'SUCCESS',
+  FAILED = 'FAILED',
+  CANCELLED = 'CANCELLED',
 }
